@@ -1,0 +1,103 @@
+# @Author: Haupt Joshua
+# @Date:   08-Apr-2018
+# @Email:  josh@hauptj.com
+# @Filename: main.yml
+# @Last modified by:   Haupt Joshua
+# @Last modified time: 08-Apr-2018
+
+---
+# Tasks to configure DNS records on Cloudflare
+
+  ##### Create New DNS Records #####
+
+- name: Create new unproxied A record
+  uri:
+    url: "https://api.cloudflare.com/client/v4/zones/{{ cf_zone_id }}/dns_records"
+    method: POST
+    body: '{"type":"A","name":"{{ cf_bypass_name }}","content":"{{ ipv4_addr }}","ttl":1,"proxied":false}'
+    body_format: json
+    headers:
+      X-Auth-Email: "{{ cf_email }}"
+      X-Auth-Key: "{{ cf_key }}"
+      Content-Type: "application/json"
+  register: A_result
+  notify: New A record API call return
+  when: cf_new_record == true
+
+
+- name: Create new unproxied AAAA record
+  uri:
+    url: "https://api.cloudflare.com/client/v4/zones/{{ cf_zone_id }}/dns_records"
+    method: POST
+    body: '{"type":"AAAA","name":"{{ cf_bypass_name }}","content":"{{ nginx_ipv6 }}","ttl":1,"proxied":false}'
+    body_format: json
+    headers:
+      X-Auth-Email: "{{ cf_email }}"
+      X-Auth-Key: "{{ cf_key }}"
+      Content-Type: "application/json"
+  register: AAAA_result
+  notify: New AAAA record API call return
+  when: cf_new_record == true
+
+
+- name: Create new proxied AAAA record
+  uri:
+    url: "https://api.cloudflare.com/client/v4/zones/{{ cf_zone_id }}/dns_records"
+    method: POST
+    body: '{"type":"AAAA","name":"{{ server_hostname }}","content":"{{ nginx_ipv6 }}","ttl":1,"proxied":true}'
+    body_format: json
+    headers:
+      X-Auth-Email: "{{ cf_email }}"
+      X-Auth-Key: "{{ cf_key }}"
+      Content-Type: "application/json"
+  register: AAAA_proxied_result
+  notify: New proxied AAAA record API call return
+  when: cf_new_record == true
+
+
+  ##### Update Existing DNS Records #####
+
+
+- name: Update unproxied A record
+  uri:
+    url: "https://api.cloudflare.com/client/v4/zones/{{ cf_zone_id }}/dns_records/{{ cf_A_id }}"
+    method: PUT
+    body: '{"type":"A","name":"{{ cf_bypass_name }}","content":"{{ ipv4_addr }}","ttl":1,"proxied":false}'
+    body_format: json
+    headers:
+      X-Auth-Email: "{{ cf_email }}"
+      X-Auth-Key: "{{ cf_key }}"
+      Content-Type: "application/json"
+  register: A_result
+  notify: Update A record API call return
+  when: cf_new_record == false
+
+
+- name: Update unproxied AAAA record
+  uri:
+    url: "https://api.cloudflare.com/client/v4/zones/{{ cf_zone_id }}/dns_records/{{ cf_AAAA_id }}"
+    method: PUT
+    body: '{"type":"AAAA","name":"{{ cf_bypass_name }}","content":"{{ nginx_ipv6 }}","ttl":1,"proxied":false}'
+    body_format: json
+    headers:
+      X-Auth-Email: "{{ cf_email }}"
+      X-Auth-Key: "{{ cf_key }}"
+      Content-Type: "application/json"
+  register: AAAA_result
+  notify: Update AAAA record API call return
+  when: cf_new_record == false
+
+
+- name: Create new proxied AAAA record
+  uri:
+    url: "https://api.cloudflare.com/client/v4/zones/{{ cf_zone_id }}/dns_records/{{ cf_proxied_AAAA_id }}"
+    method: PUT
+    body: '{"type":"AAAA","name":"{{ server_hostname }}","content":"{{ nginx_ipv6 }}","ttl":1,"proxied":true}'
+    body_format: json
+    headers:
+      X-Auth-Email: "{{ cf_email }}"
+      X-Auth-Key: "{{ cf_key }}"
+      Content-Type: "application/json"
+  register: AAAA_proxied_result
+  notify: Update proxied AAAA record API call return
+  when: cf_new_record == false

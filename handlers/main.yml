@@ -1,0 +1,26 @@
+---
+# Debug handlers for DNS config
+
+- name: New A record API call return
+  debug:
+    var: A_result.stdout
+
+- name: New AAAA record API call return
+  debug:
+    var: AAAA_result.stdout
+
+- name: New proxied AAAA record API call return
+  debug:
+    var: AAAA_proxied_result.stdout
+
+- name: Update A record API call return
+  debug:
+    var: A_result.stdout
+
+- name: Update AAAA record API call return
+  debug:
+    var: AAAA_result.stdout
+
+- name: Update proxied AAAA record API call return
+  debug:
+    var: AAAA_proxied_result.stdout
