@@ -7,7 +7,7 @@
 
 # CloudFlare account Email
 cf_email: cf@example.com
-# CloudFlare accoutn API key
+# CloudFlare account API key
 cf_key: your_api_key
 
 # true: creates a new DNS record
